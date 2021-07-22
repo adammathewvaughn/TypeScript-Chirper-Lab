@@ -1,64 +1,97 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { render } from 'react-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { v4 as uuidv4 } from "uuid";
+import Newchirp from "../components/Newchirp";
+import Timeline from "../components/Timeline";
 
-/* HOOK REACT EXAMPLE */
-const App = (props: AppProps) => {
-	const [greeting, setGreeting] = useState<string>('');
+class App extends React.Component {
+  username: any;
+  constructor(props) {
+    super(props);
+    this.state = {
+      // newChirp: { username: "", msg: "" },
+      username: "",
+      msg: "",
+      allchirps: [
+        { id: uuidv4(), username: "Jeffery", msg: "Hey" },
+        { id: uuidv4(), username: "Brett Bingle", msg: "I'm single" },
+        {
+          id: uuidv4(),
+          username: "Timmy Dilberson",
+          msg: "don't make fun of my last name",
+        },
+      ],
+    };
+  }
 
-	useEffect(() => {
-		async function getGreeting() {
-			try {
-				const res = await fetch('/api/hello');
-				const greeting = await res.json();
-				setGreeting(greeting);
-			} catch (error) {
-				console.log(error);
-			}
-		}
-		getGreeting();
-	}, []);
 
-	return (
-		<main className="container my-5">
-			<h1 className="text-primary text-center">Hello {greeting}!</h1>
-		</main>
-	);
-};
 
-interface AppProps {}
+  handleSubmit(e) {
+    e.preventDefault();
+       <Newchirp chirp={this.username} />  
+    this.setState({
+      allchirps: [
+        ...this.state.allchirps,
+        {
+          id: uuidv4(),
+          username: this.state.username,
+          msg: this.state.msg,
+        },
+      ],
+    });
+    this.setState({username: ""});
+    this.setState({msg: ""});
+  }
 
-/* CLASS REACT EXAMPLE */
-// class App extends React.Component<IAppProps, IAppState> {
-// 	constructor(props: IAppProps) {
-// 		super(props);
-// 		this.state = {
-// 			name: null
-// 		};
-// 	}
+  render() {
+    return (
+      <main className="container d-flex">
+        <section className="row justify-content-center mt-5">
+          <div className="col-md-7">
+            <form className="form-group">
+              <label>username:</label>
+              <input
+                type="text"
+              value =  { this.state.username} 
+                onChange={(e) => this.setState({ username: e.target.value })}
+                className="form-control"
+              />
+              <label>msg:</label>
+              <input
+                type="text"
+                value={this.state.msg}
+                onChange={(e) => this.setState({ msg: e.target.value })}
+                className="form-control"
+              />
+              <button
+                onClick={(e) => this.handleSubmit(e)}
+                className="btn btn-primary"
+              >
+                Click Me
+              </button>
+            </form>
+           
+          </div>
+        </section>
+        <section className="row justify-content-center mt-5">
+          <div className="col-md-7">
+            <ul className="list-group">
+              {this.state.allchirps.map((chirp) => (
+                <Timeline key={`${chirp.id}`} chirp={chirp} />
+              ))}          
+            </ul>
+          </div>
+        </section>
+      </main>
+    );
+  }
+}
 
-// 	async componentDidMount() {
-// 		try {
-// 			let r = await fetch('/api/hello');
-// 			let name = await r.json();
-// 			this.setState({ name });
-// 		} catch (error) {
-// 			console.log(error);
-// 		}
-// 	}
 
-// 	render() {
-// 		return (
-// 			<main className="container my-5">
-// 				<h1 className="text-primary text-center">Hello {this.state.name}!</h1>
-// 			</main>
-// 		);
-// 	}
-// }
 
-// export interface IAppProps {}
 
-// export interface IAppState {
-// 	name: string;
-// }
+
 
 export default App;

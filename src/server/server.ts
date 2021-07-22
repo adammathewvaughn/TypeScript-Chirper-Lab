@@ -1,5 +1,6 @@
 import * as express from 'express';
-import apiRouter from './routes';
+import apiRouter from '.';
+import { GetChirps, GetChirp, UpdateChirp, CreateChirp, DeleteChirp } from "./chirpstore";
 
 const app = express();
 
